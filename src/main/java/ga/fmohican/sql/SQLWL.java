@@ -19,7 +19,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 
-@Plugin(id = "sqlwhitelist", name = "SQL WhiteList", authors = "Fmohican", description = "Whitelist based on SQL", version = "0.0.2", url = "https://fmohican.ga/")
+@Plugin(id = "sqlwhitelist", name = "SQL WhiteList", authors = "Fmohican", description = "Whitelist based on SQL", version = "0.0.3", url = "https://fmohican.ga/sqlwhitelist")
 public class SQLWL
 {
     public static SQLWL INSTANCE;
@@ -49,27 +49,32 @@ public class SQLWL
 
     @Listener
     public void join(ClientConnectionEvent.Login e) {
-        try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://" + SQLConfig.sqlhost +":"+ SQLConfig.sqlport +"/" + SQLConfig.sqldb + "", SQLConfig.sqluser, SQLConfig.sqlpass);
-            Statement stmt = con.createStatement();
-            Optional<String> pname = e.getProfile().getName();
-            String newname = pname.toString();
-            newname = newname.replace("Optional[","").replace("]","");
-            ResultSet rs = stmt.executeQuery("select `"+SQLConfig.susers+"` from `"+SQLConfig.stabname+"` where ( `"+SQLConfig.susers+"`='" + newname + "' AND `"+SQLConfig.swhitelist+"` = 1 );");
-            if (rs.first()) {
-                getLogger().info("Connection accepted from "+newname+" they are on the whitelist");
-                }
-            else {
-                    getLogger().warn("The user "+newname+" was disconnected because are not on whitelist");
-                    e.setMessage(TextSerializers.FORMATTING_CODE.deserialize("I can't find you in whitelist"));
-                    e.setCancelled(true);
-                }
-            }
-        catch (Exception a) {
-            getLogger().error("There is an ERROR!" + a.getMessage());
-            e.setMessage(TextSerializers.FORMATTING_CODE.deserialize("SQLWhitelist isn't work well. Check configuration and try again."));
-            e.setCancelled(true);
-        }
+		if(SQLConfig.isenable == true) {
+			try {
+				Connection con = DriverManager.getConnection("jdbc:mysql://" + SQLConfig.sqlhost +":"+ SQLConfig.sqlport +"/" + SQLConfig.sqldb + "", SQLConfig.sqluser, SQLConfig.sqlpass);
+				Statement stmt = con.createStatement();
+				Optional<String> pname = e.getProfile().getName();
+				String newname = pname.toString();
+				newname = newname.replace("Optional[","").replace("]","");
+				ResultSet rs = stmt.executeQuery("select `"+SQLConfig.susers+"` from `"+SQLConfig.stabname+"` where ( `"+SQLConfig.susers+"`='" + newname + "' AND `"+SQLConfig.swhitelist+"` = 1 );");
+				if (rs.first()) {
+					getLogger().info("Connection accepted from "+newname+" they are on the whitelist");
+					}
+				else {
+						getLogger().warn("The user "+newname+" was disconnected because are not on whitelist");
+						e.setMessage(TextSerializers.FORMATTING_CODE.deserialize("I can't find you in whitelist"));
+						e.setCancelled(true);
+					}
+				}
+			catch (Exception a) {
+				getLogger().error("There is an ERROR!" + a.getMessage());
+				e.setMessage(TextSerializers.FORMATTING_CODE.deserialize("SQLWhitelist isn't work well. Check configuration and try again."));
+				e.setCancelled(true);
+			}
+		}
+		else {
+			getLogger().info("SQLWhitelist is DISABLED.");
+		}
     }
     @Listener
     public void start(GameStartedServerEvent e) throws IOException

@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ga.fmohican.sql'
-version '0.0.2'
+version '0.0.3'
 description = "SQL Based whitelist"
 
 apply plugin: 'java'

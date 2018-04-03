@@ -23,6 +23,7 @@ class SQLConfig {
     public static String stabname;
     public static String susers;
     public static String swhitelist;
+    public static Boolean isenable;
 
     public SQLConfig(SQLWL main) throws IOException, ObjectMappingException {
         plugin = main;
@@ -44,6 +45,7 @@ class SQLConfig {
         stabname = check(config.getNode("Structure", "Tabelname"), "users", "Name of the database").getString();
         susers = check(config.getNode("Structure", "usercolumn"), "user", "Name of the database").getString();
         swhitelist = check(config.getNode("Structure", "whitelistcolumn"), "whitelist", "The whitelist column, For user who are allowed the value should be 1").getString();
+        isenable = check(config.getNode("Main", "isEnable"), true, "Ture = plugin Enabled, False = Plugin Disabled").getBoolean();
         loader.save(config);
     }
 
